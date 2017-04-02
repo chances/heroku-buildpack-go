@@ -10,6 +10,7 @@ fi
 
 DataJSON="${buildpack}/data.json"
 FilesJSON="${buildpack}/files.json"
+makefile="${build}/Makefile"
 godepsJSON="${build}/Godeps/Godeps.json"
 vendorJSON="${build}/vendor/vendor.json"
 glideYAML="${build}/glide.yaml"
@@ -157,7 +158,9 @@ setGoVersionFromEnvironment() {
 }
 
 determineTool() {
-    if [ -f "${godepsJSON}" ]; then
+    if [ -f "${makefile}" ]; then
+        TOOL="make"
+    elif [ -f "${godepsJSON}" ]; then
         TOOL="godep"
         step "Checking Godeps/Godeps.json file."
         if ! jq -r . < "${godepsJSON}" > /dev/null; then

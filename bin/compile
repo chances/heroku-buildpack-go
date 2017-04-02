@@ -324,6 +324,14 @@ export GOPATH
 
 # GB installation
 case "${TOOL}" in
+    make)
+        eval "$(setupGOPATH ${name})"
+
+        unset GIT_DIR # unset git dir or it will mess with goinstall
+        cd "${src}"
+
+        step "Running make"
+        make
     godep)
         eval "$(setupGOPATH ${name})"
         godepsJSON="${src}/Godeps/Godeps.json"
