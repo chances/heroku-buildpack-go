@@ -384,6 +384,12 @@ case "${TOOL}" in
         fi
         massagePkgSpecForVendor
 
+        # Use `go get` if plain config is set
+        if [ "$(<${vendorJSON} jq -r '.heroku.plain')" == "true" ]; then
+          step "Fetching dependencies plainly (go get)"
+          go get -v ./...
+        fi
+
         step "Running: go install -v ${FLAGS[@]} ${pkgs}"
         go install -v "${FLAGS[@]}" ${pkgs} 2>&1
     ;;
