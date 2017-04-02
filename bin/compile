@@ -332,6 +332,7 @@ case "${TOOL}" in
 
         step "Running make"
         make
+    ;;
     godep)
         eval "$(setupGOPATH ${name})"
         godepsJSON="${src}/Godeps/Godeps.json"
