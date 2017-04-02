@@ -366,8 +366,6 @@ case "${TOOL}" in
         fi
     ;;
     govendor)
-        ensureInPath "govendor_linux_amd64" "${cache}/govendor/bin"
-
         eval "$(setupGOPATH ${name})"
         vendorJSON="${src}/vendor/vendor.json"
 
@@ -378,16 +376,18 @@ case "${TOOL}" in
         unset GIT_DIR # unset git dir or it will mess with goinstall
         cd "${src}"
 
-        if [ "$(<${vendorJSON} jq -r '.heroku.sync')" != "false" ]; then
-            step "Fetching any unsaved dependencies (govendor sync)"
-            govendor sync
-        fi
-        massagePkgSpecForVendor
-
         # Use `go get` if plain config is set
         if [ "$(<${vendorJSON} jq -r '.heroku.plain')" == "true" ]; then
-          step "Fetching dependencies plainly (go get)"
-          go get -v ./...
+            step "Fetching dependencies plainly (go get)"
+            go get -v ./...
+        else
+            ensureInPath "govendor_linux_amd64" "${cache}/govendor/bin"
+
+            if [ "$(<${vendorJSON} jq -r '.heroku.sync')" != "false" ]; then
+                step "Fetching any unsaved dependencies (govendor sync)"
+                govendor sync
+            fi
+            massagePkgSpecForVendor
         fi
 
         step "Running: go install -v ${FLAGS[@]} ${pkgs}"
