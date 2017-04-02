@@ -158,9 +158,7 @@ setGoVersionFromEnvironment() {
 }
 
 determineTool() {
-    if [ -f "${makefile}" ]; then
-        TOOL="make"
-    elif [ -f "${godepsJSON}" ]; then
+    if [ -f "${godepsJSON}" ]; then
         TOOL="godep"
         step "Checking Godeps/Godeps.json file."
         if ! jq -r . < "${godepsJSON}" > /dev/null; then
@@ -203,6 +201,9 @@ determineTool() {
         setGoVersionFromEnvironment
     elif [ -d "$build/src" -a -n "$(find "$build/src" -mindepth 2 -type f -name '*.go' | sed 1q)" ]; then
         TOOL="gb"
+        setGoVersionFromEnvironment
+    elif [ -f "${makefile}" ]; then
+        TOOL="make"
         setGoVersionFromEnvironment
     else
         err "Godep, GB or govendor are required. For instructions:"
